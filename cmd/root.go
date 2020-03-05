@@ -55,8 +55,6 @@ func Execute() {
 }
 
 func createDB(absolutePath string) {
-	fmt.Println("Hugo Static Site Generator v0.9 -- HEAD")
-	//fmt.Println("Hiya")
 	db, err := sql.Open("sqlite3", absolutePath)
 	if err != nil {
 		log.Fatal(err)

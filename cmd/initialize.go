@@ -13,7 +13,7 @@ func init() {
 var initializeCmd = &cobra.Command{
 	Use: "initialize",
 	Short: "Initializing the database	",
-	Long: `All software has initializes. This is Hugo's`,
+	Long: ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		// fmt.Println("Hugo Static Site Generator v0.9 -- HEAD")
 		// //fmt.Println("Hiya")

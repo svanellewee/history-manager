@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"strings"
 
@@ -35,7 +34,6 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("add called")
 		db, err := sql.Open("sqlite3", AbsolutePathDB)
 		if err != nil {
 			log.Fatal(err)
@@ -51,7 +49,9 @@ to quickly create a Cobra application.`,
 		}
 		defer stmt.Close()
 		//i := 0
-		_, err = stmt.Exec(args[0], strings.Join(args[1:], " "))
+		values := strings.Trim(args[0], " ")
+		parts := strings.Split(values, " ")
+		_, err = stmt.Exec(parts[0], strings.Join(parts[1:], " "))
 		if err != nil {
 			log.Fatal(err)
 		}
