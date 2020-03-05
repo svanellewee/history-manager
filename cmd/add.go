@@ -17,11 +17,24 @@ package cmd
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/spf13/cobra"
 )
+
+func insertEnv(entryID int64) string {
+	s := os.Environ()
+	//sort.Strings(s)
+	stringData := make([]string, 0, 100)
+	for _, i := range s {
+		parts := strings.Split(i, "=")
+		stringData = append(stringData, fmt.Sprintf("(%d, '%s', '%s')", entryID, parts[0], parts[1]))
+	}
+	return fmt.Sprintf("INSERT INTO environment(entry_id, key, value) VALUES %s;", strings.Join(stringData, ","))
+}
 
 // addCmd represents the add command
 var addCmd = &cobra.Command{
@@ -43,7 +56,7 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			log.Fatal(err)
 		}
-		stmt, err := tx.Prepare("INSERT INTO entry(entry_id, time, value) VALUES (?, DATETIME(), ?)")
+		stmt, err := tx.Prepare("INSERT INTO entry(history_id, time, value) VALUES (?, DATETIME(), ?)")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -52,12 +65,23 @@ to quickly create a Cobra application.`,
 		values := strings.Trim(args[0], " ")
 		parts := strings.Split(values, " ")
 		theRest := strings.Trim(strings.Join(parts[1:], " "), " ")
-		_, err = stmt.Exec(parts[0], theRest)
+		res, err := stmt.Exec(parts[0], theRest)
+		if err != nil {
+			log.Fatal(err)
+		}
+		lastID, err := res.LastInsertId()
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		tx.Commit()
+
+		envUpdate := insertEnv(lastID)
+		//fmt.Println(envUpdate)
+		_, err = db.Exec(envUpdate)
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 

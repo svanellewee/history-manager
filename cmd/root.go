@@ -24,6 +24,8 @@ import (
 
 	"github.com/spf13/cobra"
 
+	_ "github.com/mattn/go-sqlite3"
+
 	homedir "github.com/mitchellh/go-homedir"
 )
 
@@ -63,9 +65,16 @@ func createDB(absolutePath string) {
 
 	sqlStmt := `
 	CREATE TABLE IF NOT EXISTS entry (
-		entry_id INTEGER,
+		entry_id INTEGER PRIMARY KEY AUTOINCREMENT,
+		history_id VARCHAR,
 		time TIMESTAMP,
 		VALUE VARCHAR
+	);
+	CREATE TABLE IF NOT EXISTS environment (
+		entry_id INTEGER,
+		key VARCHAR,
+		value VARCHAR,
+		FOREIGN KEY(entry_id) REFERENCES entry(entry_id)
 	);
 	`
 	_, err = db.Exec(sqlStmt)

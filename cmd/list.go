@@ -41,16 +41,17 @@ to quickly create a Cobra application.`,
 			log.Fatal(err)
 		}
 		defer db.Close()
-		rows, err := db.Query("SELECT entry_id, time, value FROM entry")
+		rows, err := db.Query("SELECT history_id, entry_id, time, value FROM entry")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer rows.Close()
 		for rows.Next() {
 			var id int
+			var historyID string
 			var name string
 			var value string
-			err = rows.Scan(&id, &name, &value)
+			err = rows.Scan(&historyID, &id, &name, &value)
 			if err != nil {
 				log.Fatal(err)
 			}
