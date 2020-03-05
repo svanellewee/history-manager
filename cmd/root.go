@@ -23,6 +23,7 @@ import (
 	"path"
 
 	"github.com/spf13/cobra"
+	"github.com/svanellewee/history-manager/environment"
 
 	_ "github.com/mattn/go-sqlite3"
 
@@ -66,15 +67,11 @@ func createDB(absolutePath string) {
 	sqlStmt := `
 	CREATE TABLE IF NOT EXISTS entry (
 		entry_id INTEGER PRIMARY KEY AUTOINCREMENT,
+		environment_id INTEGER,
 		history_id VARCHAR,
 		time TIMESTAMP,
-		VALUE VARCHAR
-	);
-	CREATE TABLE IF NOT EXISTS environment (
-		entry_id INTEGER,
-		key VARCHAR,
-		value VARCHAR,
-		FOREIGN KEY(entry_id) REFERENCES entry(entry_id)
+		VALUE VARCHAR,
+		FOREIGN KEY(environment_id) REFERENCES environment(environment_id)
 	);
 	`
 	_, err = db.Exec(sqlStmt)
@@ -82,6 +79,8 @@ func createDB(absolutePath string) {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return
 	}
+
+	environment.InitEnv(db)
 }
 
 func init() {

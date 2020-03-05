@@ -22,6 +22,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/svanellewee/history-manager/environment"
+
 	"github.com/spf13/cobra"
 )
 
@@ -52,11 +54,17 @@ to quickly create a Cobra application.`,
 			log.Fatal(err)
 		}
 		defer db.Close()
+
+		environmentID, err := environment.Insert(db, environment.NewEnvArray())
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("....", environmentID)
 		tx, err := db.Begin()
 		if err != nil {
 			log.Fatal(err)
 		}
-		stmt, err := tx.Prepare("INSERT INTO entry(history_id, time, value) VALUES (?, DATETIME(), ?)")
+		stmt, err := tx.Prepare("INSERT INTO entry(environment_id, history_id, time, value) VALUES (?, ?, DATETIME(), ?)")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -65,23 +73,24 @@ to quickly create a Cobra application.`,
 		values := strings.Trim(args[0], " ")
 		parts := strings.Split(values, " ")
 		theRest := strings.Trim(strings.Join(parts[1:], " "), " ")
-		res, err := stmt.Exec(parts[0], theRest)
+		res, err := stmt.Exec(environmentID, parts[0], theRest)
 		if err != nil {
 			log.Fatal(err)
 		}
-		lastID, err := res.LastInsertId()
-		if err != nil {
-			log.Fatal(err)
-		}
+		_ = res
+		// lastID, err := res.LastInsertId()
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
 
 		tx.Commit()
 
-		envUpdate := insertEnv(lastID)
-		//fmt.Println(envUpdate)
-		_, err = db.Exec(envUpdate)
-		if err != nil {
-			log.Fatal(err)
-		}
+		// envUpdate := insertEnv(lastID)
+		// //fmt.Println(envUpdate)
+		// _, err = db.Exec(envUpdate)
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
 	},
 }
 

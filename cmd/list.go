@@ -41,21 +41,25 @@ to quickly create a Cobra application.`,
 			log.Fatal(err)
 		}
 		defer db.Close()
-		rows, err := db.Query("SELECT history_id, entry_id, time, value FROM entry")
+		rows, err := db.Query(`
+		SELECT history_id, environment_id, entry_id, time, value, hash 
+		FROM entry LEFT JOIN environment USING (environment_id)
+		`)
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer rows.Close()
 		for rows.Next() {
-			var id int
+			var id, envID int
 			var historyID string
 			var name string
 			var value string
-			err = rows.Scan(&historyID, &id, &name, &value)
+			var hash string
+			err = rows.Scan(&historyID, &envID, &id, &name, &value, &hash)
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Printf("%d,%s,%s\n", aurora.Magenta(id), aurora.Cyan(name), aurora.Yellow(value))
+			fmt.Printf("%d, %d, %s, %s,%s\n", aurora.Magenta(id), aurora.BrightRed(envID), aurora.BrightRed(hash), aurora.Cyan(name), aurora.Yellow(value))
 		}
 		err = rows.Err()
 		if err != nil {
