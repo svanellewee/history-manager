@@ -59,7 +59,14 @@ to quickly create a Cobra application.`,
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Printf("%d, %d, %s, %s, %s\n", aurora.Magenta(id), aurora.BrightRed(envID), aurora.BrightRed(hash), aurora.Cyan(name), aurora.Yellow(value))
+			fmt.Printf(
+				"%d, %d, %s, %s, %s\n",
+				aurora.Magenta(id),
+				aurora.BrightRed(envID),
+				aurora.BrightRed(hash[0:10]),
+				aurora.Cyan(name),
+				aurora.Yellow(value),
+			)
 		}
 		err = rows.Err()
 		if err != nil {
