@@ -59,7 +59,7 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("....", environmentID)
+		//fmt.Println("....", environmentID)
 		tx, err := db.Begin()
 		if err != nil {
 			log.Fatal(err)
