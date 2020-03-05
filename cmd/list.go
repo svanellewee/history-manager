@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/logrusorgru/aurora"
 	"github.com/spf13/cobra"
 )
 
@@ -53,7 +54,7 @@ to quickly create a Cobra application.`,
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Println(id, name, value)
+			fmt.Printf("%d,%s,%s\n", aurora.Magenta(id), aurora.Cyan(name), aurora.Yellow(value))
 		}
 		err = rows.Err()
 		if err != nil {

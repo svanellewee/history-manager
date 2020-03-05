@@ -51,7 +51,8 @@ to quickly create a Cobra application.`,
 		//i := 0
 		values := strings.Trim(args[0], " ")
 		parts := strings.Split(values, " ")
-		_, err = stmt.Exec(parts[0], strings.Join(parts[1:], " "))
+		theRest := strings.Trim(strings.Join(parts[1:], " "), " ")
+		_, err = stmt.Exec(parts[0], theRest)
 		if err != nil {
 			log.Fatal(err)
 		}
